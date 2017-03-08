@@ -6,6 +6,8 @@ import org.apache.commons.vfs2.FileObject;
 import org.apache.commons.vfs2.FileSystemException;
 import org.apache.commons.vfs2.FileSystemOptions;
 import org.apache.commons.vfs2.impl.StandardFileSystemManager;
+import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
+import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -21,7 +23,7 @@ import java.util.zip.ZipInputStream;
  */
 public class DecompressZip {
     private static final Log log = LogFactory.getLog(init.class);
-    StandardFileSystemManager manager;
+    StandardFileSystemManager manager;/* create a manager for manage the files*/
     public boolean unzip(String source, String destDirectory) throws FileSystemException {
 
         manager = init.getManager();
@@ -29,34 +31,34 @@ public class DecompressZip {
         FileSystemOptions opts = init.createDefaultOptions();
         try {
 
-            // Create remote object
+            /* Create remote object source and destination */
             FileObject remoteFile = manager.resolveFile(source, opts);
             FileObject remoteDesFile = manager.resolveFile(destDirectory, opts);
-            // File destDir = new File(destDirectory);
-            if (remoteFile.exists()) {
+
+            if (remoteFile.exists()) { /* if remote file exist */
                 if (!remoteDesFile.exists()) {
-                    //create a folder
+                    /*create a folder with zip file name */
                     remoteDesFile.createFolder();
                 }
-                //open the zip file
+                /* open the zip file */
                 ZipInputStream zipIn = new ZipInputStream(remoteFile.getContent().getInputStream());
                 ZipEntry entry = zipIn.getNextEntry();
                 try {
-                    // iterates over entries in the zip file
+                    /* iterates over entries in the zip file */
                     while (entry != null) {
                         // boolean testResult;
                         String filePath = destDirectory + File.separator + entry.getName();
-                        // Create remote object
+                        /* Create remote object */
                         FileObject remoteFilePath = manager.resolveFile(filePath, opts);
                         if (log.isDebugEnabled()) {
                             log.debug("The created path is " + remoteFilePath.toString());
                         }
                         try {
                             if (!entry.isDirectory()) {
-                                // if the entry is a file, extracts it
+                                /* if the entry is a file, extracts it using call the function extract*/
                                 extractFile(zipIn, filePath, opts);
                             } else {
-                                // if the entry is a directory, make the directory
+                                /* if the entry is a directory/folder, make the directory */
                                 remoteFilePath.createFolder();
                             }
                         } catch (IOException e) {
@@ -68,7 +70,7 @@ public class DecompressZip {
                     }
                     resultStatus = true;
                 } finally {
-                    //we must always close the zip file
+                    /*we must always close the zip file */
                     zipIn.close();
                 }
             } else {
@@ -86,9 +88,9 @@ public class DecompressZip {
     private void extractFile(ZipInputStream zipIn, String filePath, FileSystemOptions opts) {
         BufferedOutputStream bos = null;
         try {
-            // Create remote object
+            /* Create remote object */
             FileObject remoteFilePath = manager.resolveFile(filePath, opts);
-            //open the zip file
+            /*open the zip file */
             OutputStream fOut = remoteFilePath.getContent().getOutputStream();
             bos = new BufferedOutputStream(fOut);
             byte[] bytesIn = new byte[2048];
@@ -99,7 +101,7 @@ public class DecompressZip {
         } catch (IOException e) {
             log.error("Unable to read an entry: " + e.getMessage(), e);
         } finally {
-            //we must always close the zip file
+            /* we must always close the zip file */
             if (bos != null) {
                 try {
                     bos.close();

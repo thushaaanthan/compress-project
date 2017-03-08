@@ -23,7 +23,7 @@ import java.io.OutputStream;
 public class DecompressCpio {
     private static final Log log = LogFactory.getLog(init.class);
     StandardFileSystemManager manager;
-    public boolean unzip(String source, String destDirectory) throws FileSystemException {
+    public boolean unCpio(String source, String destDirectory) throws FileSystemException {
 
         manager = init.getManager();
         boolean resultStatus = false;

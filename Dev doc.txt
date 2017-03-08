@@ -1,0 +1,25 @@
+in here all the developing files are contain at:compress\src\org\appache\com
+and also we upload all the libraries.
+
+we are develop all the codes using java as the programming language
+
+In here we are only using apache commons compress libraries for compress and de compress the folder
+
+up to apache commons compress 1.13 version we create a the compress and de compress file for zip,tar,jar,cpio formats
+
+in the future you can modify it with the future updates
+
+please make sure the libraries are open source or not before implementing 
+
+we develop all the codes under the apache software licence
+ http://www.apache.org/licenses/LICENSE-2.0
+ 
+ 
+ 
+ further development use this websites 
+ https://commons.apache.org/proper/commons-compress/
+ https://github.com/apache/commons-vfs
+ https://commons.apache.org/proper/commons-vfs/apidocs/org/apache/commons/vfs2/FileObject.html
+ https://en.wikipedia.org/wiki/List_of_archive_formats
+
+

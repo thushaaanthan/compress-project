@@ -27,20 +27,22 @@ public class compress_zip {
 
 	public void fileCompress( String source, String destination) throws FileSystemException {
 		boolean resultStatus = false;
-		StandardFileSystemManager manager;
-		FileSystemOptions opts = init.createDefaultOptions();
+		StandardFileSystemManager manager;/* create a manager for manage the files*/
+		FileSystemOptions opts = init.createDefaultOptions(); /* configure the commons vfs is working */
 		try {
 			manager = init.getManager();
-			FileObject fileObj = manager.resolveFile(source, opts);
-			FileObject destObj = manager.resolveFile(destination, opts);
-			if (fileObj.exists()) {
-				if (fileObj.getType() == FileType.FOLDER) {
-					List<FileObject> fileList = new ArrayList<FileObject>();
-					getAllFiles(fileObj, fileList);
-					writeZipFiles(fileObj, destObj, fileList);
-				} else {
+			FileObject fileObj = manager.resolveFile(source, opts);/* create remote object for source */
+			FileObject destObj = manager.resolveFile(destination, opts);/* create remote object destination*/
+			if (fileObj.exists()) {/* if it is a file then do it */
+				if (fileObj.getType() == FileType.FOLDER) {/* check wether the file type is folder or not */
+					List<FileObject> fileList = new ArrayList<FileObject>();/*initalise array list */
+					getAllFiles(fileObj, fileList); /*get the all files from the array list */
+					writeZipFiles(fileObj, destObj, fileList); /* call the write zip file */
+				} else { /*if the file type is not a folder and it is a normal file*/
 					ZipArchiveOutputStream outputStream = null;
 					InputStream fileIn = null;
+
+						/*adding the file into the zip folder */
 					try {
 						outputStream = new ZipArchiveOutputStream(destObj.getContent().getOutputStream());
 						fileIn = fileObj.getContent().getInputStream();
@@ -51,21 +53,21 @@ public class compress_zip {
 						while ((length = fileIn.read(bytes)) != -1) {
 							outputStream.write(bytes, 0, length);
 						}
-					} catch (Exception e) {
+					} catch (Exception e) { /*any problem will occour while compression */
 						log.error("Unable to compress a file." + e.getMessage());
 					} finally {
 						try {
 							if (outputStream != null) {
 								outputStream.close();
 							}
-						} catch (IOException e) {
+						} catch (IOException e) {/*any problem occour in ZipOutputStream */
 							log.error("Error while closing ZipOutputStream: " + e.getMessage(), e);
 						}
 						try {
 							if (fileIn != null) {
 								fileIn.close();
 							}
-						} catch (IOException e) {
+						} catch (IOException e) {/*any problem occour in ZipOInputStream */
 							log.error("Error while closing InputStream: " + e.getMessage(), e);
 						}
 						manager.close();
@@ -86,6 +88,7 @@ public class compress_zip {
 	}
 	private void getAllFiles(FileObject dir, List<FileObject> fileList) {
 		try {
+			/* if there any sub folder with in the main folder then get the folder */
 			FileObject[] children = dir.getChildren();
 			for (FileObject child : children) {
 				fileList.add(child);
@@ -97,15 +100,15 @@ public class compress_zip {
 			e.printStackTrace();
 		}
 	}
-	private void writeZipFiles(FileObject fileObj, FileObject directoryToZip,
-							   List<FileObject> fileList)
-			throws IOException {
+
+	/*write the folder and files into the copressed file */
+	private void writeZipFiles(FileObject fileObj, FileObject directoryToZip, List<FileObject> fileList) throws IOException {
 		ZipArchiveOutputStream zos = null;
 		try {
 			zos = new ZipArchiveOutputStream(directoryToZip.getContent().getOutputStream());
 			for (FileObject file : fileList) {
 				if (file.getType() == FileType.FILE) {
-					addToZip(fileObj, file, zos);
+					addToZip(fileObj, file, zos); /*call the addtozip method for add the file into zip */
 				}
 			}
 		} catch (IOException e) {
@@ -116,11 +119,12 @@ public class compress_zip {
 			}
 		}
 	}
+	/*adding the each and every file into the zip file */
 	private void addToZip(FileObject fileObject, FileObject file, ZipArchiveOutputStream outputStream) {
 		InputStream fin = null;
 		try {
 			fin = file.getContent().getInputStream();
-			String name = file.getName().toString();
+			String name = file.getName().toString(); /*create the files within the zip file like in the main folder */
 			String entry = name.substring(fileObject.getName().toString().length() + 1,
 					name.length());
 			ZipArchiveEntry zipEntry = new ZipArchiveEntry(entry);

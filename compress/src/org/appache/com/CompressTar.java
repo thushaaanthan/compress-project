@@ -37,7 +37,7 @@ public class CompressTar {
                 if (fileObj.getType() == FileType.FOLDER) {
                     List<FileObject> fileList = new ArrayList<FileObject>();
                     getAllFiles(fileObj, fileList);
-                    writeZipFiles(fileObj, destObj, fileList);
+                    writeTarFiles(fileObj, destObj, fileList);
                 } else {
                     TarArchiveOutputStream outputStream = null;
                     InputStream fileIn = null;
@@ -59,7 +59,7 @@ public class CompressTar {
                                 outputStream.close();
                             }
                         } catch (IOException e) {
-                            log.error("Error while closing ZipOutputStream: " + e.getMessage(), e);
+                            log.error("Error while closing TarOutputStream: " + e.getMessage(), e);
                         }
                         try {
                             if (fileIn != null) {
@@ -97,15 +97,15 @@ public class CompressTar {
             e.printStackTrace();
         }
     }
-    private void writeZipFiles(FileObject fileObj, FileObject directoryToZip,
+    private void writeTarFiles(FileObject fileObj, FileObject directoryToTar,
                                List<FileObject> fileList)
             throws IOException {
         TarArchiveOutputStream zos = null;
         try {
-            zos = new TarArchiveOutputStream(directoryToZip.getContent().getOutputStream());
+            zos = new TarArchiveOutputStream(directoryToTar.getContent().getOutputStream());
             for (FileObject file : fileList) {
                 if (file.getType() == FileType.FILE) {
-                    addToZip(fileObj, file, zos);
+                    addToTar(fileObj, file, zos);
                 }
             }
         } catch (IOException e) {
@@ -116,7 +116,7 @@ public class CompressTar {
             }
         }
     }
-    private void addToZip(FileObject fileObject, FileObject file, TarArchiveOutputStream outputStream) {
+    private void addToTar(FileObject fileObject, FileObject file, TarArchiveOutputStream outputStream) {
         InputStream fin = null;
         try {
             fin = file.getContent().getInputStream();
@@ -132,7 +132,7 @@ public class CompressTar {
                 outputStream.write(bytes, 0, length);
             }
         } catch (IOException e) {
-            log.error("Unable to add a file into the zip file directory." + e.getMessage());
+            log.error("Unable to add a file into the Tar file directory." + e.getMessage());
         } finally {
             try {
                 outputStream.closeArchiveEntry();

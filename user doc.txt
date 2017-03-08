@@ -1,0 +1,25 @@
+hi..
+If you need to use this method first you all need to download some libraries
+commons-compress
+commons-long
+commons-logging
+commons-net
+commons-vfs
+
+after downloading this put the libraries into your files
+then you can call the method ,
+for compression:
+comp.compress(source path,destination path,file type);
+source path - the path the folder contain want to compress
+destination path - the final place the folder need to contain after compression
+file type - the compress file type (it must we zip or tar or jar or cpio )  
+
+for decompression :
+comp.decompress(source path,destination path,file type);
+comp.compress(source path,destination path,file type);
+source path - the path the compressed folder contain
+destination path - the final place the folder need to contain after decompression
+file type - the compress file type (it must we zip or tar or jar or cpio)  
+
+
+note:you can compress or de compress for other than zip,jar,tar and cpio.

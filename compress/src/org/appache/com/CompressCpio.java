@@ -39,7 +39,7 @@ public class CompressCpio {
                 if (fileObj.getType() == FileType.FOLDER) {
                     List<FileObject> fileList = new ArrayList<FileObject>();
                     getAllFiles(fileObj, fileList);
-                    writeZipFiles(fileObj, destObj, fileList);
+                    writeCpioFiles(fileObj, destObj, fileList);
                 } else {
                     CpioArchiveOutputStream outputStream = null;
                     InputStream fileIn = null;
@@ -61,7 +61,7 @@ public class CompressCpio {
                                 outputStream.close();
                             }
                         } catch (IOException e) {
-                            log.error("Error while closing ZipOutputStream: " + e.getMessage(), e);
+                            log.error("Error while closing CpioOutputStream: " + e.getMessage(), e);
                         }
                         try {
                             if (fileIn != null) {
@@ -99,15 +99,15 @@ public class CompressCpio {
             e.printStackTrace();
         }
     }
-    private void writeZipFiles(FileObject fileObj, FileObject directoryToZip,
+    private void writeCpioFiles(FileObject fileObj, FileObject directoryToCpio,
                                List<FileObject> fileList)
             throws IOException {
         CpioArchiveOutputStream zos = null;
         try {
-            zos = new CpioArchiveOutputStream(directoryToZip.getContent().getOutputStream());
+            zos = new CpioArchiveOutputStream(directoryToCpio.getContent().getOutputStream());
             for (FileObject file : fileList) {
                 if (file.getType() == FileType.FILE) {
-                    addToZip(fileObj, file, zos);
+                    addToCpio(fileObj, file, zos);
                 }
             }
         } catch (IOException e) {
@@ -118,7 +118,7 @@ public class CompressCpio {
             }
         }
     }
-    private void addToZip(FileObject fileObject, FileObject file, CpioArchiveOutputStream outputStream) {
+    private void addToCpio(FileObject fileObject, FileObject file, CpioArchiveOutputStream outputStream) {
         InputStream fin = null;
         try {
             fin = file.getContent().getInputStream();
@@ -134,7 +134,7 @@ public class CompressCpio {
                 outputStream.write(bytes, 0, length);
             }
         } catch (IOException e) {
-            log.error("Unable to add a file into the zip file directory." + e.getMessage());
+            log.error("Unable to add a file into the Cpio file directory." + e.getMessage());
         } finally {
             try {
                 outputStream.closeArchiveEntry();

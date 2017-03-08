@@ -37,7 +37,7 @@ public class CompressJar {
                 if (fileObj.getType() == FileType.FOLDER) {
                     List<FileObject> fileList = new ArrayList<FileObject>();
                     getAllFiles(fileObj, fileList);
-                    writeZipFiles(fileObj, destObj, fileList);
+                    writeJarFiles(fileObj, destObj, fileList);
                 } else {
                     JarArchiveOutputStream outputStream = null;
                     InputStream fileIn = null;
@@ -59,7 +59,7 @@ public class CompressJar {
                                 outputStream.close();
                             }
                         } catch (IOException e) {
-                            log.error("Error while closing ZipOutputStream: " + e.getMessage(), e);
+                            log.error("Error while closing JarOutputStream: " + e.getMessage(), e);
                         }
                         try {
                             if (fileIn != null) {
@@ -97,15 +97,15 @@ public class CompressJar {
             e.printStackTrace();
         }
     }
-    private void writeZipFiles(FileObject fileObj, FileObject directoryToZip,
+    private void writeJarFiles(FileObject fileObj, FileObject directoryToJar,
                                List<FileObject> fileList)
             throws IOException {
         JarArchiveOutputStream zos = null;
         try {
-            zos = new JarArchiveOutputStream(directoryToZip.getContent().getOutputStream());
+            zos = new JarArchiveOutputStream(directoryToJar.getContent().getOutputStream());
             for (FileObject file : fileList) {
                 if (file.getType() == FileType.FILE) {
-                    addToZip(fileObj, file, zos);
+                    addToJar(fileObj, file, zos);
                 }
             }
         } catch (IOException e) {
@@ -116,7 +116,7 @@ public class CompressJar {
             }
         }
     }
-    private void addToZip(FileObject fileObject, FileObject file, JarArchiveOutputStream outputStream) {
+    private void addToJar(FileObject fileObject, FileObject file, JarArchiveOutputStream outputStream) {
         InputStream fin = null;
         try {
             fin = file.getContent().getInputStream();
@@ -132,7 +132,7 @@ public class CompressJar {
                 outputStream.write(bytes, 0, length);
             }
         } catch (IOException e) {
-            log.error("Unable to add a file into the zip file directory." + e.getMessage());
+            log.error("Unable to add a file into the Jar file directory." + e.getMessage());
         } finally {
             try {
                 outputStream.closeArchiveEntry();

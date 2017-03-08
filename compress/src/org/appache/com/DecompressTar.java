@@ -21,9 +21,9 @@ import java.io.OutputStream;
  * Created by thushaan on 1/2/17.
  */
 public class DecompressTar {
-    private static final Log log = LogFactory.getLog(init.class);
+    private static final Log log = LogFactory.getLog(DecompressTar.class);
     StandardFileSystemManager manager;
-    public boolean unzip(String source, String destDirectory) throws FileSystemException {
+    public boolean unTar(String source, String destDirectory) throws FileSystemException {
 
         manager = init.getManager();
         boolean resultStatus = false;
@@ -39,7 +39,7 @@ public class DecompressTar {
                     //create a folder
                     remoteDesFile.createFolder();
                 }
-                //open the zip file
+                //open the tar file
                 TarArchiveInputStream tarIn = new TarArchiveInputStream(remoteFile.getContent().getInputStream());
                 TarArchiveEntry entry = tarIn.getNextTarEntry();
 
@@ -93,7 +93,7 @@ public class DecompressTar {
             FileObject remoteFilePath = manager.resolveFile(filePath, opts);
             //open the zip file
             OutputStream fOut = remoteFilePath.getContent().getOutputStream();
-            bos = new BufferedOutputStream(fOut);
+            bos = new BufferedOutputStream(fOut);// take each buffer and write
             byte[] bytesIn = new byte[2048];
             int read;
             while ((read = tarIn.read(bytesIn)) != -1) {
@@ -112,5 +112,6 @@ public class DecompressTar {
             }
         }
     }
+
 
 }
